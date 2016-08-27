@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<title>./collo.py --django-js</title>
+		<link rel="stylesheet" href="/static/css/styles.css">
+	</head>
+    <head>
+        <link rel="stylesheet" href="/static/css/reveal.css">
+        <link rel="stylesheet" href="/static/css/solarized.css">
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h1>Django & Javascript</h1>
+                    <p>Como você usa seus arquivos estaticos?</p>
+                </section>
+                <section>
+                    <h2>O problema</h2>
+                    <p>O Django tem um mecanismo irado para organizar seus arquivos estáticos:</p>
+                    <blockquote>
+                        Websites generally need to serve additional files such as images, JavaScript, or CSS. In Django, we refer to these files as “static files”. Django provides <code>django.contrib.staticfiles</code> to help you manage them.
+                    </blockquote>
+                    <a href="https://docs.djangoproject.com/en/1.10/howto/static-files/">managing static files</a>
+                </section>
+                <section>
+                    <h2>Mas logo aparecem soluções para extender essas cpacidades</h2>
+                    <ul>
+                        <li><a href="https://django-pipeline.readthedocs.io/en/latest/">Django Pipeline</a></li>
+                        <li><a href="http://django-pipeline.readthedocs.io/en/latest/compressors.html">Compressors</a></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>E com isso são introduzidas outras dependências</h2>
+                    <ul>
+                        <li>node.js / npm</li>
+                        <li>yuglify</li>
+                        <li>ruby / sass</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>+ complexidade do deploy</h2>
+                    <code>./manage.py collectstatic</code>
+                    <p>precisa fazer mais que <strong>coletar</strong> arquivos estáticos</p>
+                </section>
+                <section>
+                    <h2>Questões</h2>
+                    <dl>
+                        <dt>Problemas de compatibilidade</dt>
+                        <dd>erros no <code>collectstatic</code></dd>
+                        <dt>falta de estáticos do projeto</dt>
+                        <dd>erros nas tags <code>{% static 'my-resource.css' %}</code></dd>
+                        <dt>Erros no template</dt>
+                        <dd>Erro <strong>500</strong>!</dd>
+                    </ul>
+                </section>
+                <section>
+                    <h2>O que fazer?</h2>
+                </section>
+                <section>
+                    <h2>Parar ou seguir adiante?</h2>
+                    <p>Eu parei...</p>
+                    <p>... mas venho pensando em seguir adiante</p>
+                </section>
+                <section>
+                    <h2>Como seguir?</h2>
+                    <ul>
+                        <li>Bower</li>
+                        <li>Browserify</li>
+                        <li>Brunch</li>
+                        <li>Grunt</li>
+                        <li>Gulp</li>
+                        <li><a href="https://webpack.github.io/">Webpack</a></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Webpack</h2>
+                    <small>porque sim.</small>
+                </section>
+                <section>
+                    <h2>WebPack</h2>
+                    <ul>
+                        <li>Plugins</li>
+                        <li>Performance</li>
+                        <li>Loaders</li>
+                        <li>Support</li>
+                        <li>Code Splitting</li>
+                        <li>Optimizations</li>
+                        <li>Development Tools</li>
+                        <li>Multiple targets</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Quanto vale o rolê?</h2>
+                    <p>Você passa a usar as ferramentas que a galera de JavaScript usa pra gerenciar seu JavaScript.</p>
+                </section>
+                <section>
+                    <h2>Tem de tudo</h2>
+                    <p><small>E vai ter mais semana que vem</small></p>
+                    <dl>
+                        <dt>CofeeScript</dt>
+                        <dd>pré-compilador</dd>
+                        <dt>TypeScript</dt>
+                        <dd>pré-compilador</dd>
+                        <dt>Reactjs + JSX</dt>
+                        <dd>Javascript + HTML extension</dd>
+                        <dt>Babel</dt>
+                        <dd>ES2015 =D</dd>
+                    </dl>
+                </section>
+                <section>
+                    <h2>EC2015</h2>
+                    <p>Gerenciamento de dependências em JS!</p>
+                        <code>
+                            <pre>
+import defaultMember from "module-name";
+import * as name from "module-name";
+import { member } from "module-name";
+import { member as alias } from "module-name";
+import { member1 , member2 } from "module-name";
+import { member1 , member2 as alias2 , [...] } from "module-name";
+import defaultMember, { member [ , [...] ] } from "module-name";
+import defaultMember, * as name from "module-name";
+import "module-name";
+                            </pre>
+                        </code>
+                </section>
+                <section>
+                    <h2>Por que não require.js</h2>
+                    <p>that guy: <a href="http://tomdale.net/2012/01/amd-is-not-the-answer/">http://tomdale.net/2012/01/amd-is-not-the-answer/</a>
+                </section>
+                <section>
+                    <h2>Legal, vamos usar Django com React.JS sem problemas!</h2>
+                </section>
+                <section>
+                    <img src="http://www.freelargeimages.com/wp-content/uploads/2015/06/Grumpy_Cat_No_01.jpg" alt="No.">
+                </section>
+                <section>
+                    <p><a href="https://www.pandastrike.com/posts/20150311-react-bad-idea">this other guy</a> me convenceu que era uma má ideia:</p>
+                    <p>What if, instead of promoting an open source framework that only benefits applications that adopt it, they instead put their efforts into making open source browsers better?</p>
+                    <p>...<p>
+                    <p>They won't do this, though, because it isn't in their interest to do so. You may recall Facebook's abrupt about-face on their mobile app back in 2012, when Mark Zuckerberg said building on HTML5 was his company's "biggest mistake."</p>
+                </section>
+                <section>
+                    <h2>EC2015</h2>
+                    <p>Eu escolho você</p>
+                    <iframe src="//giphy.com/embed/KdJFsGqetCf9S" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="http://giphy.com/gifs/pikachu-KdJFsGqetCf9S">via GIPHY</a></p>
+                </section>
+                <section>
+                    <h2>Possibilidades</h2>
+                    <ul>
+                        <li>As mesmmas técnincas com uma linguagem melhor</li>
+                        <li>Webcomponents</li>
+                        <li>Frameworks de webcomponents</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Webcomponents + EC2015</h2>
+                    <dl>
+                        <dt>Pollyfils</dt>
+                        <dd>http://webcomponents.org/</dd>
+                        <dt>Babel</dt>
+                        <dd>Transpilar para ES5</dd>
+                        <dt>Opcional: Polymer Framework</dt>
+                        <dd>https://www.polymer-project.org/1.0/</dd>
+                    </ul>
+
+                </section>
+                <section>
+                    <h2>Comofas//?</h2>
+                    <p><a href="https://blog.revillweb.com/write-web-components-with-es2015-es6-75585e1f2584#.ti2d28va0">Aqui</a> tem um tutorial muito, muito legal</p>
+                </section>
+                <section>
+                    <h2>E o Kiko?</h2>
+                    <p>digo, o Django.</p>
+                    <ul>
+                        <li>Criar webcomponents dentro da pasta static?</li>
+                        <li>Cada webcomponents na pasta da app que usa?</li>
+                        <li>git submódule?</li>
+                        <li>Gerenciador de dependências JS?</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Webcomponents</h2>
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/zfQoleQEa4w" frameborder="0" allowfullscreen></iframe>
+                </section>
+                <section>
+                </section>
+
+            </div>
+        </div>
+        <script src="/static/js/reveal.js"></script>
+        <script>
+            Reveal.initialize();
+        </script>
+    </body>
+</html>
