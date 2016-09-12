@@ -30,5 +30,16 @@ section[name="content"] {
 
 section[name="content"] h2{
     text-align: center;
-    height: 300px;
+}
+
+section[name="content"] div > span{
+    position: relative;
+    display: block;
+    margin: 20px auto;
+    font-family: monospace;
+    font-size: 120px;
+    max-width: 120px;
+    -ms-transform: rotate(90deg); /* IE 9 */
+    -webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+    transform: rotate(90deg);
 }
