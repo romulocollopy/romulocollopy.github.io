@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Resumé - Rômulo Collopy</title>
     <style>
-        body {background-color: #FFD; font-family: "League Gothic", Impact, sans-serif; color: rgba(0, 0, 60, .7)}
+        body {background-color: #FFD; font-family: "League Gothic", Impact, sans-serif; color: rgba(0, 0, 30, .7)}
         section {border-bottom: solid 1px #AAA; max-width: 780px; margin: auto}
         section div { border-bottom: solid 1px #CCC; }
         section div:last-child { border-bottom: 0px; }
@@ -14,9 +14,11 @@
         dl dt { font-weight: bold; margin: 10px auto;}
         h3 {margin: 10px auto}
         a {text-decoration: none}
+        #download {max-width: 640px; margin: 0 auto; text-align: center}
     </style>
 </head>
 <body>
+    <div id="download"><a href="/resume/resume-romulo-collopy.pdf" target="_blank()"><small>download</small></a></div>
     <section name="personal info">
         <h1>Rômulo Collopy</h1>
         <ul>
@@ -135,14 +137,4 @@
         </ul>
     </section>
 </body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js"></script>
-<script type="text/javascript">
-var doc = new jsPDF();
-content = document.querySelector('html');
-
-doc.fromHTML(content.innerHTML, 10, 10);
-doc.save('resume-romulo.pdf')
-
-</script>
-
 </html>
