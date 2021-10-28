@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="generator" content="HTML Tidy for HTML5 for Apple macOS version 5.8.0">
+  <meta charset="utf-8">
+  <title>OCR: the code I want to hide</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="../dist/reveal.css">
+  <link rel="stylesheet" href="../dist/theme/simple.css" id="theme">
+  <link rel="stylesheet" href="../plugin/highlight/zenburn.css">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section data-auto-animate="">
+        <h3>Alachemy OCR</h3>
+        <p>The code I want to hide</p>
+      </section>
+      <section data-auto-animate="">
+        <h3>$ whoami</h3>
+          <pre data-id="code"><code data-line-numbers="" class="hljs" data-trim="">
+          romulo.collopy
+          webmaster
+          he / him / his
+          </code></pre>
+      </section>
+      <section data-auto-animate="">
+        <h3>Disclaimer</h3>
+        <p>I've prepared this presentation alone and my opinions may not reflect Peripatetics™ as a team.</p>
+      </section>
+      <section data-auto-animate="">
+        <h3>The good stuff</h3>
+        <ul>
+          <li class="fragment fade-in">94% test coverage</li>
+          <li class="fragment fade-in">Fast to onboard</li>
+          <li class="fragment fade-in">Fast to change</li>
+          <li class="fragment fade-in">Automatic api docs</li>
+          <li class="fragment fade-in">We are going live \o/</li>
+        </ul>
+      </section>
+      <section data-auto-animate="">
+        <section>
+          <h3>Who cares?</h3>
+        </section>
+        <section>
+          <p>We're here to complain.</p>
+        </section>
+      </section>
+      <section data-auto-animate="">
+        <section>
+          <h3>What is your favorite part of FreshBooks systems?</h3>
+        </section>
+        <section>
+          <h3>Systems!</h3>
+          <pre data-id="code"><code data-line-numbers="" class="hljs" data-trim="">
+class HashidsMixin:
+    _system_id: int | None = None
+    hashids = Hashids(
+        salt=settings.HASHIDS_SECRET,
+        min_length=settings.HASHIDS_LENGTH,
+    )
+
+    def get_system_id(self) -&gt; int:
+        if self._system_id is not None:
+            return self._system_id
+
+        try:
+            (self._system_id,) = self.hashids.decode(
+                self.kwargs["accountid"]
+            )
+        except KeyError:
+            if self.request._request.path_info.startswith(
+                "/service/ocr/swagger"
+            ):
+                # Swagger calls the endpoints internally to introspect them. We use system_id 0 to identify it.
+                return 0
+            raise ParseError(
+                {
+                    "accountid": "value not provided in the path"
+                }
+            )
+
+        except ValueError:
+            accountid = self.kwargs["accountid"]
+            raise ValidationError(
+                {
+                    "accountid": f"{accountid} is not a valid value"
+                }
+            )
+
+        else:
+            return self._system_id
+</code></pre>
+        </section>
+        <section>
+          <h3>Why I love this code</h3>
+          <ol>
+            <li class="fragment fade-in-then-out">Why should we need to identify the account in the URL if we have Masterlock's token?</li>
+            <li class="fragment fade-in-then-out">We don't even check if the systems match<small>(even if there's no logic reason for them to be different)</small></li>
+            <li class="fragment fade-in-then-out">Decoupled systems should not dictated each other's designs</li>
+          </ol>
+        </section>
+      </section>
+      <section data-auto-animate="">
+        <section>
+          <h3>Talking about dictating design...</h3>
+        </section>
+        <section>
+          <h3>We are Ember.js' friends!</h3>
+          <pre data-id="code"><code data-line-numbers="" class="hljs" data-trim="">
+class ClassNameDispatchMixin:
+    """Mixin injecting class of the model into request keyword args
+
+    This mixin is required by EmberRender to correctly render the
+    response.
+
+    """
+
+    def dispatch(self, request, *args, **kwargs):
+        kwargs["classname"] = self.model.__name__.lower()
+        return super().dispatch(request, *args, **kwargs)
+</code></pre>
+        </section>
+        <section>
+          <h3>Why I love this code</h3>
+          <ol>
+            <li class="fragment fade-in-then-out">There is a library for that: <a href="https://github.com/explodes/djsonapi">Djano-JsonAPI</a>
+            </li>
+            <li class="fragment fade-in-then-out">There is a convention on how to use renderers
+              <pre data-id="code"><code data-line-numbers="" class="hljs" data-trim="">
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+}
+</code></pre>
+            </li>
+          </ol>
+        </section>
+      </section>
+      <section data-auto-animate="">
+        <section>
+          <h3>Andrii's absolute favorite</h3>
+        </section>
+        <section>
+          <h3>The $$$erializer</h3>
+          <pre data-id="code"><code data-line-numbers="" class="hljs" data-trim="">
+class MoneySerializer(serializers.Serializer):
+    """MoneySerializer takes code from `currency_code` field and `amount` from the field it's bound to.
+    It renders in magnum-ui compatible format {"amount": x, "code": "USD"}"""
+
+    code = serializers.CharField(
+        max_length=3,
+        min_length=3,
+        source="currency_code",
+        read_only=True,
+    )
+
+    def __init__(
+        self,
+        currency_code: str,
+        amount_field_name: str = "amount",
+        *args,
+        **kwargs,
+    ):
+        # make sure we can access all fields of instance by setting source="*"
+        kwargs["source"] = "*"
+        # DecimalField is used if value is provided in kwargs,
+        # LateBindDecimalField is used otherwise and pulls from model instance
+        self.fields[
+            amount_field_name
+        ] = self.build_amount_field(currency_code, **kwargs)
+        # Set amount right away using value if provided
+        if "value" in kwargs:
+            args = (
+                {
+                    "currency_code": currency_code,
+                    amount_field_name: kwargs["value"],
+                },
+                *args,
+            )
+            del kwargs["value"]
+        super().__init__(*args, **kwargs)
+
+    def bind(
+        self,
+        field_name: str | None,
+        parent: serializers.Serializer | None,
+    ) -&gt; None:
+        # execute late binding of amount field to the field_name that is used for the money serializer
+        if field_name != "amount":
+            # Django raises an error if 'source' is equals the field_name
+            self.fields["amount"].source = field_name
+
+        self.fields["amount"].bind_from_serializer()
+        return super().bind(field_name, parent)
+
+    def get_attribute(self, instance):
+        # get_attribute on amount field will raise SkipField if the attribute doesn't exist and required=False
+        # we just pass it up a level here, so the whole money object gets skipped
+        self.fields["amount"].get_attribute(instance)
+        return super().get_attribute(instance)
+
+    @staticmethod
+    def build_amount_field(
+        currency_code: str, **kwargs
+    ) -&gt; LateBindDecimalField:
+        currency = currencies.get_by_code(currency_code)
+        if kwargs.get("value", None) is not None:
+            return serializers.DecimalField(
+                max_digits=None,
+                coerce_to_string=True,
+                decimal_places=currency.decimal_places,
+                required=kwargs.get("required", True),
+            )
+        else:
+            return LateBindDecimalField(
+                max_digits=None,
+                coerce_to_string=True,
+                decimal_places=currency.decimal_places,
+                required=kwargs.get("required", True),
+            )
+</code></pre>
+        </section>
+        <section>
+          <h3>Why I love this code</h3>
+          <ol>
+            <li class="fragment fade-in-then-out">It's a masterpiece of Django's Serializers understanding... but we are not building a library</li>
+            <li class="fragment fade-in-then-out">Duplication is far cheaper than the wrong abstraction (<a href="https://sandimetz.com/blog/2016/1/20/the-wrong-abstraction">Sandi Metz Talk on that</a>)
+            </li>
+            <li class="fragment fade-in-then-out">It saves us a little bit of work by adding a lot of thinking overhead.</li>
+            <li class="fragment fade-in-then-out">It's all because the way we use Money in the frontend =D</li>
+          </ol>
+        </section>
+      </section>
+      <section data-auto-animate="">
+        <h2 class="r-fit-text">With great generality comes great complexity</h2><img src="https://st.xsm.us/c/b/9780615880990" alt="Book cover">
+        <p><small>Philip N. Klein</small></p><small><a href="https://www.allbookstores.com/Coding-Matrix-Linear-Algebra-through/9780615880990" target="_blank">https://www.allbookstores.com/Coding-Matrix-Linear-Algebra-through/9780615880990</a></small>
+      </section>
+      <section data-auto-animate="">
+        <section>
+          <h3>Easily Annotate your queries</h3>
+        </section>
+        <section>
+          <h3>The Queryset</h3>
+          <pre data-id="code"><code data-line-numbers="" class="hljs" data-trim="">
+class DocumentQuerySet(models.QuerySet):
+    def annotate_totals(self):
+        bill_totals = DocumentBill.objects.filter(
+            document_id=models.OuterRef("pk")
+        ).annotate_bill_amounts()
+        expense_totals = DocumentExpense.objects.filter(
+            document_id=models.OuterRef("pk")
+        ).annotate_expense_amounts()
+        return self.annotate(
+            _total_amount=models.Case(
+                models.When(
+                    type=Document.Type.BILL,
+                    then=models.Subquery(
+                        bill_totals.values(
+                            "_total_bill_amount"
+                        )
+                    ),
+                ),
+                models.When(
+                    type=Document.Type.EXPENSE,
+                    then=models.Subquery(
+                        expense_totals.values(
+                            "_total_expense_amount"
+                        )
+                    ),
+                ),
+                default=models.Value(0.0),
+                output_field=models.DecimalField(),
+            ),
+            _total_tax=models.Case(
+                models.When(
+                    type=Document.Type.BILL,
+                    then=models.Subquery(
+                        bill_totals.values(
+                            "_total_bill_tax"
+                        )
+                    ),
+                ),
+                models.When(
+                    type=Document.Type.EXPENSE,
+                    then=models.Subquery(
+                        expense_totals.values(
+                            "_total_expense_tax"
+                        )
+                    ),
+                ),
+                default=models.Value(0.0),
+                output_field=models.DecimalField(),
+            ),
+        )
+</code></pre>
+        </section>
+        <section>
+          <h3>Why I love this code</h3>
+          <ol>
+            <li class="fragment fade-in-then-out">It is masterpiece on Django's ORM's usage</li>
+            <li class="fragment fade-in-then-out">It is magic</li>
+            <li class="fragment fade-in-then-out">It generates a hell of a query</li>
+          </ol>
+        </section>
+        <section data-auto-animate="" data-auto-animate-unmatched="fade">
+          <pre data-id="code"><code data-line-numbers="" class="hljs" data-trim="">
+SELECT "documents_document"."created_at",
+       "documents_document"."updated_at",
+       "documents_document"."id",
+       "documents_document"."subscription_id",
+       "documents_document"."uploadr_jwt",
+       "documents_document"."file_name",
+       "documents_document"."mime_type",
+       "documents_document"."ocr_result",
+       "documents_document"."status",
+       "documents_document"."upload_method",
+       "documents_document"."type",
+       "documents_document"."vendor",
+       "documents_document"."date",
+       "documents_document"."currency_code",
+       "documents_document"."evolve_id",
+       "subscriptions_subscription"."created_at",
+       "subscriptions_subscription"."updated_at",
+       "subscriptions_subscription"."id",
+       "subscriptions_subscription"."user_id",
+       "subscriptions_subscription"."system_id",
+       "subscriptions_subscription"."ocr_email",
+       "subscriptions_subscription"."active",
+       "auth_user"."id",
+       "auth_user"."password",
+       "auth_user"."last_login",
+       "auth_user"."is_superuser",
+       "auth_user"."username",
+       "auth_user"."first_name",
+       "auth_user"."last_name",
+       "auth_user"."email",
+       "auth_user"."is_staff",
+       "auth_user"."is_active",
+       "auth_user"."date_joined",
+       "documents_documentexpense"."id",
+       "documents_documentexpense"."created_at",
+       "documents_documentexpense"."updated_at",
+       "documents_documentexpense"."document_id",
+       "documents_documentexpense"."description",
+       "documents_documentexpense"."category_id",
+       "documents_documentexpense"."amount",
+       "documents_documentexpense"."clientid",
+       "documents_documentexpense"."markup_percent",
+       "documents_documentexpense"."include_document",
+       "documents_documentexpense"."projectid"
+FROM "documents_document"
+INNER JOIN "subscriptions_subscription" ON ("documents_document"."subscription_id" = "subscriptions_subscription"."id")
+INNER JOIN "auth_user" ON ("subscriptions_subscription"."user_id" = "auth_user"."id")
+LEFT OUTER JOIN "documents_documentexpense" ON ("documents_document"."id" = "documents_documentexpense"."document_id")
+WHERE (NOT ("documents_document"."status" = 'done')
+       AND "subscriptions_subscription"."system_id" = 6384
+       AND "documents_document"."id" = '6f32df7143094f5d85955954780b80de')
+LIMIT 21 SAVEPOINT "s140028712859456_x7"
+SELECT "documents_documentexpense"."id",
+       "documents_documentexpense"."created_at",
+       "documents_documentexpense"."updated_at",
+       "documents_documentexpense"."document_id",
+       "documents_documentexpense"."description",
+       "documents_documentexpense"."category_id",
+       "documents_documentexpense"."amount",
+       "documents_documentexpense"."clientid",
+       "documents_documentexpense"."markup_percent",
+       "documents_documentexpense"."include_document",
+       "documents_documentexpense"."projectid"
+FROM "documents_documentexpense"
+WHERE "documents_documentexpense"."document_id" = '6f32df7143094f5d85955954780b80de'
+LIMIT 21
+UPDATE "documents_documentexpense"
+SET "created_at" = '2021-10-25 12:56:10.234639',
+    "updated_at" = '2021-10-25 12:56:10.869017',
+    "document_id" = '6f32df7143094f5d85955954780b80de',
+    "description" = 'Onto figure suddenly until institution. One international law. Note window which accept direction paper charge. White fear always light season.',
+    "category_id" = 9908,
+    "amount" = '3.4500000000',
+    "clientid" = 7640,
+    "markup_percent" = '5.0000000000',
+    "include_document" = 1,
+    "projectid" = NULL
+WHERE "documents_documentexpense"."id" = 1 RELEASE SAVEPOINT "s140028712859456_x7"
+  DELETE
+  FROM "documents_expensetax" WHERE "documents_expensetax"."document_expense_id" = 1
+  SELECT "documents_document"."created_at",
+         "documents_document"."updated_at",
+         "documents_document"."id",
+         "documents_document"."subscription_id",
+         "documents_document"."uploadr_jwt",
+         "documents_document"."file_name",
+         "documents_document"."mime_type",
+         "documents_document"."ocr_result",
+         "documents_document"."status",
+         "documents_document"."upload_method",
+         "documents_document"."type",
+         "documents_document"."vendor",
+         "documents_document"."date",
+         "documents_document"."currency_code",
+         "documents_document"."evolve_id",
+         CASE
+             WHEN "documents_document"."type" = 'bill' THEN
+                    (SELECT
+                       (SELECT CAST(SUM(CAST((CAST((V0."quantity" * V0."unit_cost") AS NUMERIC) * CAST((1 + (COALESCE(
+                                                                                                                        (SELECT CAST(SUM(U0."percent") AS NUMERIC) AS "total_tax_percent"
+                                                                                                                         FROM "documents_lineitemtax" U0
+                                                                                                                         WHERE U0."line_item_id" = V0."id"
+                                                                                                                         GROUP BY U0."line_item_id"), 0.0) / 100.0)) AS NUMERIC)) AS NUMERIC)) AS NUMERIC) AS "total_bill_amount"
+                        FROM "documents_lineitem" V0
+                        WHERE V0."document_bill_id" = W0."id"
+                        GROUP BY V0."document_bill_id") AS "_total_bill_amount"
+                     FROM "documents_documentbill" W0
+                     WHERE W0."document_id" = "documents_document"."id")
+             WHEN "documents_document"."type" = 'expense' THEN
+                    (SELECT V0."amount" AS "_total_expense_amount"
+                     FROM "documents_documentexpense" V0
+                     WHERE V0."document_id" = "documents_document"."id")
+             ELSE 0.0
+         END AS "_total_amount",
+         CASE
+             WHEN "documents_document"."type" = 'bill' THEN
+                    (SELECT
+                       (SELECT CAST(SUM(CAST((CAST((V0."quantity" * V0."unit_cost") AS NUMERIC) * (COALESCE(
+                                                                                                              (SELECT CAST(SUM(U0."percent") AS NUMERIC) AS "total_tax_percent"
+                                                                                                               FROM "documents_lineitemtax" U0
+                                                                                                               WHERE U0."line_item_id" = V0."id"
+                                                                                                               GROUP BY U0."line_item_id"), 0.0) / 100.0)) AS NUMERIC)) AS NUMERIC) AS "total_bill_tax"
+                        FROM "documents_lineitem" V0
+                        WHERE V0."document_bill_id" = W0."id"
+                        GROUP BY V0."document_bill_id") AS "_total_bill_tax"
+                     FROM "documents_documentbill" W0
+                     WHERE W0."document_id" = "documents_document"."id")
+             WHEN "documents_document"."type" = 'expense' THEN
+                    (SELECT
+                       (SELECT CAST(SUM(U0."amount") AS NUMERIC) AS "total_tax_amount"
+                        FROM "documents_expensetax" U0
+                        WHERE U0."document_expense_id" = V0."id"
+                        GROUP BY U0."document_expense_id") AS "_total_expense_tax"
+                     FROM "documents_documentexpense" V0
+                     WHERE V0."document_id" = "documents_document"."id")
+             ELSE 0.0
+         END AS "_total_tax",
+         COALESCE("auth_user"."first_name", '') || COALESCE(COALESCE(' ', '') || COALESCE("auth_user"."last_name", ''), '') AS "author_name",
+         "subscriptions_subscription"."created_at",
+         "subscriptions_subscription"."updated_at",
+         "subscriptions_subscription"."id",
+         "subscriptions_subscription"."user_id",
+         "subscriptions_subscription"."system_id",
+         "subscriptions_subscription"."ocr_email",
+         "subscriptions_subscription"."active",
+         "documents_documentbill"."id",
+         "documents_documentbill"."created_at",
+         "documents_documentbill"."updated_at",
+         "documents_documentbill"."document_id",
+         "documents_documentbill"."bill_number",
+         "documents_documentbill"."due_date",
+         "documents_documentbill"."language",
+         "documents_documentbill"."single_line_description",
+         "documents_documentbill"."single_line_category_id",
+         "documents_documentbill"."single_line_quantity",
+         "documents_documentbill"."single_line_unit_cost",
+         "documents_documentbill"."single_line_tax_name",
+         "documents_documentbill"."single_line_tax_percent",
+         "documents_documentexpense"."id",
+         "documents_documentexpense"."created_at",
+         "documents_documentexpense"."updated_at",
+         "documents_documentexpense"."document_id",
+         "documents_documentexpense"."description",
+         "documents_documentexpense"."category_id",
+         "documents_documentexpense"."amount",
+         "documents_documentexpense"."clientid",
+         "documents_documentexpense"."markup_percent",
+         "documents_documentexpense"."include_document",
+         "documents_documentexpense"."projectid"
+  FROM "documents_document"
+  INNER JOIN "subscriptions_subscription" ON ("documents_document"."subscription_id" = "subscriptions_subscription"."id")
+  INNER JOIN "auth_user" ON ("subscriptions_subscription"."user_id" = "auth_user"."id")
+  LEFT OUTER JOIN "documents_documentbill" ON ("documents_document"."id" = "documents_documentbill"."document_id")
+  LEFT OUTER JOIN "documents_documentexpense" ON ("documents_document"."id" = "documents_documentexpense"."document_id") WHERE (NOT ("documents_document"."status" = 'done')
+                                                                                                                                AND "documents_document"."id" = '6f32df7143094f5d85955954780b80de')
+LIMIT 21
+SELECT "documents_expensetax"."created_at",
+       "documents_expensetax"."updated_at",
+       "documents_expensetax"."id",
+       "documents_expensetax"."document_expense_id",
+       "documents_expensetax"."name",
+       "documents_expensetax"."amount",
+       "documents_expensetax"."percent"
+FROM "documents_expensetax"
+WHERE "documents_expensetax"."document_expense_id" = 1
+  SELECT "documents_documentexpense"."id",
+         "documents_documentexpense"."created_at",
+         "documents_documentexpense"."updated_at",
+         "documents_documentexpense"."document_id",
+         "documents_documentexpense"."description",
+         "documents_documentexpense"."category_id",
+         "documents_documentexpense"."amount",
+         "documents_documentexpense"."clientid",
+         "documents_documentexpense"."markup_percent",
+         "documents_documentexpense"."include_document",
+         "documents_documentexpense"."projectid",
+         "documents_documentexpense"."amount" AS "_total_expense_amount",
+
+    (SELECT CAST(SUM(U0."amount") AS NUMERIC) AS "total_tax_amount"
+     FROM "documents_expensetax" U0
+     WHERE U0."document_expense_id" = "documents_documentexpense"."id"
+     GROUP BY U0."document_expense_id") AS "_total_expense_tax"
+  FROM "documents_documentexpense" WHERE "documents_documentexpense"."document_id" = '6f32df7143094f5d85955954780b80de'
+  SELECT "documents_documentexpense"."amount" AS "_total_expense_amount"
+  FROM "documents_documentexpense" WHERE "documents_documentexpense"."document_id" = '6f32df7143094f5d85955954780b80de'
+LIMIT 1
+SELECT
+  (SELECT CAST(SUM(U0."amount") AS NUMERIC) AS "total_tax_amount"
+   FROM "documents_expensetax" U0
+   WHERE U0."document_expense_id" = "documents_documentexpense"."id"
+   GROUP BY U0."document_expense_id") AS "_total_expense_tax"
+FROM "documents_documentexpense"
+WHERE "documents_documentexpense"."document_id" = '6f32df7143094f5d85955954780b80de'
+LIMIT 1
+SELECT "documents_documentexpense"."id",
+       "documents_documentexpense"."created_at",
+       "documents_documentexpense"."updated_at",
+       "documents_documentexpense"."document_id",
+       "documents_documentexpense"."description",
+       "documents_documentexpense"."category_id",
+       "documents_documentexpense"."amount",
+       "documents_documentexpense"."clientid",
+       "documents_documentexpense"."markup_percent",
+       "documents_documentexpense"."include_document",
+       "documents_documentexpense"."projectid",
+       "documents_documentexpense"."amount" AS "_total_expense_amount",
+
+  (SELECT CAST(SUM(U0."amount") AS NUMERIC) AS "total_tax_amount"
+   FROM "documents_expensetax" U0
+   WHERE U0."document_expense_id" = "documents_documentexpense"."id"
+   GROUP BY U0."document_expense_id") AS "_total_expense_tax"
+FROM "documents_documentexpense"
+WHERE "documents_documentexpense"."document_id" = '6f32df7143094f5d85955954780b80de'
+  SELECT "documents_documentexpense"."amount" AS "_total_expense_amount"
+  FROM "documents_documentexpense" WHERE "documents_documentexpense"."document_id" = '6f32df7143094f5d85955954780b80de'
+LIMIT 1
+SELECT
+  (SELECT CAST(SUM(U0."amount") AS NUMERIC) AS "total_tax_amount"
+   FROM "documents_expensetax" U0
+   WHERE U0."document_expense_id" = "documents_documentexpense"."id"
+   GROUP BY U0."document_expense_id") AS "_total_expense_tax"
+FROM "documents_documentexpense"
+WHERE "documents_documentexpense"."document_id" = '6f32df7143094f5d85955954780b80de'
+LIMIT 1
+    </code></pre>
+        </section>
+      </section>
+      <section data-auto-animate="">
+        <section>
+          <h3>How to avoid IntegrityErrors?</h3>
+        </section>
+        <section>
+          <h3>Sweet if!</h3>
+          <pre data-id="code"><code data-line-numbers="" class="hljs" data-trim="">
+class Document(TimeStampedModel):
+    # ...
+
+    def persist_related_entities(
+        self, data: dict[str, Any]
+    ) -&gt; None:
+        """
+        Creates the aggregate for the document in the database and delete the old values.
+        """
+        documentbill_data = data.pop("documentbill", None)
+        documentexpense_data = data.pop(
+            "documentexpense", None
+        )
+
+        if self._state.adding:
+            # if the document is not persisted yet, persist it before trying to create related entities
+            self.save()
+
+        if documentbill_data is not None:
+            self.documentbill = DocumentBill.update_or_create(
+                document=self,
+                documentbill_data=documentbill_data,
+                system_language=self.subscription.system_language,
+            )
+
+        if documentexpense_data is not None:
+            taxes = documentexpense_data.pop(
+                "expensetax_set", None
+            )
+            (
+                self.documentexpense,
+                _,
+            ) = DocumentExpense.objects.update_or_create(
+                document=self, defaults=documentexpense_data
+            )
+            self.documentexpense.update_taxes(taxes)
+          </code></pre>
+        </section>
+        <section>
+          <h3>Why I love this code</h3>
+          <p class="fragment fade-in-then-out">It compensates poor design with a defensive programing technique</p>
+        </section>
+      </section>
+      <section data-auto-animate="">
+        <section>
+          <h3>Don not bow to the gods of OOP</h3>
+        </section>
+        <section>
+          <h3>Or: How to keep high coupling and low cohesion</h3>
+          <pre data-id="code"><code data-line-numbers="" class="hljs" data-trim="">
+class Document(TimeStampedModel):
+    # ...
+
+    def validate_for_send(self) -&gt; None:
+        if self.status != Document.Status.DRAFT:
+            raise DocumentSendInvalidStatus
+        if self.type not in (
+            Document.Type.BILL,
+            Document.Type.EXPENSE,
+        ):
+            raise DocumentSendInvalidType
+        if not self.date:
+            raise DocumentSendMissingField("date")
+
+        if self.type == Document.Type.EXPENSE:
+            if not hasattr(self, "documentexpense"):
+                raise DocumentSendMissingField(
+                    "documentexpense"
+                )
+            if self.documentexpense.amount is None:
+                raise DocumentSendMissingField(
+                    "amount", obj="Expense"
+                )
+            if self.documentexpense.category_id is None:
+                raise DocumentSendMissingField(
+                    "category_id", obj="Expense"
+                )
+
+        elif self.type == Document.Type.BILL:
+            if not hasattr(self, "documentbill"):
+                raise DocumentSendMissingField(
+                    "documentbill"
+                )
+            if not self.vendor:
+                raise DocumentSendMissingField("vendor")
+            if not self.documentbill.due_date:
+                raise DocumentSendMissingField(
+                    "due_date", obj="Bill"
+                )
+            if not self.documentbill.language:
+                raise DocumentSendMissingField(
+                    "language", obj="Bill"
+                )
+            if not self.documentbill.line_items:
+                raise DocumentSendMissingLineItems
+
+            for i, line in enumerate(
+                self.documentbill.line_items, start=1
+            ):
+                if not line.category_id:
+                    raise DocumentSendMissingField(
+                        "category_id", obj=f"Line Item {i}"
+                    )
+                if line.unit_cost is None:
+                    raise DocumentSendMissingField(
+                        "unit_cost", obj=f"Line Item {i}"
+                    )
+          </code></pre>
+        </section>
+        <section>
+          <h3>Why I love this code</h3>
+          <ol>
+            <li class="fragment fade-in-then-out">Aggregate members do not have validation logic in themselves</li>
+            <li class="fragment fade-in-then-out">Isn't it a bit big?</li>
+          </ol>
+        </section>
+      </section>
+      <section data-auto-animate="">
+        <h3>Thanks for all the fish</h3>
+        <p>romulo.collopy@freshbooks.com</p>
+      </section>
+
+    </div>
+  </div>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script>
+
+
+
+    Reveal.initialize({
+            center: true,
+            hash: true,
+            plugins: [ RevealHighlight ]
+    });
+  </script>
+</body>
+</html>
