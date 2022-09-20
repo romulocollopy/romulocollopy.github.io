@@ -10,9 +10,13 @@
         section div { border-bottom: solid 1px #CCC; }
         section div:last-child, section:last-child { border-bottom: 0; paddin-bottom: 15px;}
         section div h3 + p { font-style: italic; color: rgba(0, 0, 0, .7); font-size: .7em}
-        section h1 { font-size: 3em}
-        section h1 + ul { list-style: none; margin: 10 0px; padding: 0; font-size: .7em}
-        dl dt { font-weight: bold; margin: 10px auto;}
+        section h1 { font-size: 3em; margin: 10px 0px}
+        section h1 + ul { list-style: none; margin: 10 0px; padding: 0; font-size: .9em}
+        section[name="knowledge"] ul li:first-child { font-weight: bold; margin: 10px auto}
+        section[name="knowledge"] div { display: flex;  justify-content:
+          space-between; padding: 0 0 10px 0}
+        section[name="knowledge"] ul { display: inline-table}
+        section[name="knowledge"] ul, section[name="knowledge"] li { list-style: none; margin: 0; padding: 0}
         h3 {margin: 10px auto}
         a {text-decoration: none}
         #download {max-width: 640px; margin: 0 auto; text-align: center}
@@ -55,33 +59,43 @@
         through a personal project using Rust, Dart (Flutter)
         communication through gRPC</p>
     </section>
-    <section name="knoledge">
+    <section name="knowledge">
         <h2>Technical knowledge</h2>
-        <dl>
-            <dt>Programming Languages</dt>
-            <dd>Python (8y)</dd>
-            <dd>JavaScript (7y)</dd>
-            <dd>TypeScript (5y)</dd>
-            <dd>Dart (1y -)</dd>
-            <dd>Go (1y)</dd>
-            <dd>Rust (1y)</dd>
-            <dt>Frameworks</dt>
-            <dd>Django (6y +)</dd>
-            <dd>Flask (3y -)</dd>
-            <dd>FastAPI (2y)</dd>
-            <dd>Vue.js (2y +)</dd>
-            <dd>React.js (1y)</dd>
-            <dd>EmberJs (2y)</dd>
-            <dt>Databases</dt>
-            <dd>PostgreSQL (6y +)</dd>
-            <dd>MySQL / MariaDB (4y +)</dd>
-            <dd>sqlite (6y +)</dd>
-            <dd>MongoDB (1y)</dd>
-            <dt>DevOps</dt>
-            <dd>Docker (5y +)</dd>
-            <dd>Ansible (2y +)</dd>
-            <dd>Kubenetes (3y +)</dd>
-        </dl>
+        <div>
+          <ul>
+            <li>Programming Languages</li>
+            <li>Python (8y)</li>
+            <li>JavaScript (7y)</li>
+            <li>TypeScript (5y)</li>
+            <li>Dart (1y -)</li>
+            <li>Go (1y)</li>
+            <li>Rust (1y)</li>
+          </ul>
+          <ul>
+            <li>Frameworks</li>
+            <li>Django (6y +)</li>
+            <li>Flask (3y -)</li>
+            <li>FastAPI (2y)</li>
+            <li>Vue.js (2y +)</li>
+            <li>React.js (1y)</li>
+            <li>EmberJs (2y)</li>
+          </ul>
+          <ul>
+            <li>Databases</li>
+            <li>PostgreSQL (6y +)</li>
+            <li>MySQL / MariaDB (4y +)</li>
+            <li>sqlite (6y +)</li>
+            <li>MongoDB (1y)</li>
+          </ul>
+          <ul>
+            <li>Infrastructure</li>
+            <li>Docker (5y +)</li>
+            <li>RabbitMQ (5y +)</li>
+            <li>Redis (5y +)</li>
+            <li>Ansible (2y +)</li>
+            <li>Kubenetes (3y +)</li>
+          </ul>
+        </div>
     </section>
     <section name="experience">
         <h2>Professional Experience</h2>
